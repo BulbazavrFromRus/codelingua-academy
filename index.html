@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeLinguae Academy — английский язык с репетитором</title>
+    <meta name="description" content="CodeLinguae Academy — индивидуальные занятия английским языком. Разговорный, бизнес-английский, подготовка к экзаменам и английский для IT-специалистов.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#60;/&#62;</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Literata:ital,opsz,wght@0,18..144,400;0,18..144,500;0,18..144,600;1,18..144,400&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- =====================================================================
+     HEADER
+     ===================================================================== -->
+<header>
+    <div class="nav-inner">
+        <a href="#top" class="logo"><span class="bracket">&lt;</span>CodeLinguae<span class="dot">.</span>Academy<span class="bracket">/&gt;</span></a>
+        <ul class="tabs" id="tabs">
+            <li><a href="#top" class="active">index<span class="ext">.html</span></a></li>
+            <li><a href="#about">about<span class="ext">.md</span></a></li>
+            <li><a href="#courses">courses<span class="ext">.json</span></a></li>
+            <li><a href="#process">process<span class="ext">.yml</span></a></li>
+            <li><a href="#reviews">reviews<span class="ext">.log</span></a></li>
+            <li><a href="#pricing">pricing<span class="ext">.csv</span></a></li>
+            <li><a href="#faq">faq<span class="ext">.txt</span></a></li>
+            <li><a href="#contact">contact<span class="ext">.sh</span></a></li>
+        </ul>
+        <a href="#contact" class="nav-cta">Записаться →</a>
+        <button class="burger" id="burger" aria-label="Открыть меню" aria-expanded="false">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+        </button>
+    </div>
+</header>
+
+<!-- =====================================================================
+     HERO
+     ===================================================================== -->
+<section class="hero" id="top">
+    <div class="wrap hero-grid">
+        <div>
+            <p class="eyebrow">english_tutor.exe запущен</p>
+            <h1 id="heroTitle"></h1>
+            <p class="lede" id="heroLede"></p>
+            <div class="hero-ctas">
+                <a href="#contact" class="btn btn-primary">Пробное занятие бесплатно</a>
+                <a href="#courses" class="btn btn-ghost">Смотреть курсы</a>
+            </div>
+        </div>
+
+        <div>
+            <div class="term">
+                <div class="term-bar">
+                    <span class="term-dot" style="background:#e5716a"></span>
+                    <span class="term-dot" style="background:#e5ac3f"></span>
+                    <span class="term-dot" style="background:#6fbf8c"></span>
+                    <span class="fname">grammar_check.js</span>
+                </div>
+                <div class="term-body" id="termBody">
+                    <!-- заполняется через JS: parseSentence(...) -->
+                </div>
+            </div>
+            <div class="legend">
+                <span><i style="background:var(--blue)"></i> существительное</span>
+                <span><i style="background:var(--green)"></i> глагол</span>
+                <span><i style="background:var(--amber)"></i> прилагательное</span>
+                <span><i style="background:var(--rose)"></i> союз</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =====================================================================
+     ABOUT
+     ===================================================================== -->
+<section id="about">
+    <div class="wrap">
+        <div class="section-head reveal">
+            <p class="section-tag"><span class="path">~/</span>about<span class="ext">.md</span></p>
+            <h2>Кто ведёт занятия</h2>
+        </div>
+        <div class="about-grid">
+            <div class="about-card reveal" id="aboutCard">
+                <!-- заполняется из CONFIG.tutor -->
+            </div>
+            <div class="about-body reveal" id="aboutBody">
+                <!-- заполняется из CONFIG.about.paragraphs -->
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- =====================================================================
+     COURSES
+     ===================================================================== -->
+<section class="section-alt" id="courses">
+    <div class="wrap">
+        <div class="section-head reveal">
+            <p class="section-tag"><span class="path">~/</span>courses<span class="ext">.json</span></p>
+            <h2>Форматы занятий</h2>
+            <p>Каждый курс — отдельная программа: свой словарь, свои задачи, свой темп. Начинаем с диагностики уровня и подбираем нужный.</p>
+        </div>
+        <div class="course-grid" id="courseGrid">
+            <!-- карточки генерируются из CONFIG.courses -->
+        </div>
+    </div>
+</section>
+
+<!-- =====================================================================
+     PROCESS
+     ===================================================================== -->
+<section id="process">
+    <div class="wrap">
+        <div class="section-head reveal">
+            <p class="section-tag"><span class="path">~/</span>process<span class="ext">.yml</span></p>
+            <h2>Как проходит старт</h2>
+        </div>
+        <div class="steps" id="stepsGrid">
+            <!-- шаги генерируются из CONFIG.steps -->
+        </div>
+    </div>
+</section>
+
+<!-- =====================================================================
+     REVIEWS
+     ===================================================================== -->
+<section class="section-alt" id="reviews">
+    <div class="wrap">
+        <div class="section-head reveal">
+            <p class="section-tag"><span class="path">~/</span>reviews<span class="ext">.log</span></p>
+            <h2>Что говорят ученики</h2>
+        </div>
+        <div class="review-grid" id="reviewGrid">
+            <!-- карточки генерируются из CONFIG.reviews -->
+        </div>
+    </div>
+</section>
+
+<!-- =====================================================================
+     PRICING
+     ===================================================================== -->
+<section id="pricing">
+    <div class="wrap">
+        <div class="section-head reveal">
+            <p class="section-tag"><span class="path">~/</span>pricing<span class="ext">.csv</span></p>
+            <h2>Стоимость занятий</h2>
+            <p>Оплата пакетами выгоднее разовых занятий. Первое занятие — диагностическое и бесплатное.</p>
+        </div>
+        <div class="price-grid" id="priceGrid">
+            <!-- карточки генерируются из CONFIG.plans -->
+        </div>
+    </div>
+</section>
+
+<!-- =====================================================================
+     FAQ
+     ===================================================================== -->
+<section class="section-alt" id="faq">
+    <div class="wrap">
+        <div class="section-head reveal">
+            <p class="section-tag"><span class="path">~/</span>faq<span class="ext">.txt</span></p>
+            <h2>Частые вопросы</h2>
+        </div>
+        <div class="faq-list" id="faqList">
+            <!-- генерируются из CONFIG.faq -->
+        </div>
+    </div>
+</section>
+
+<!-- =====================================================================
+     CONTACT
+     ===================================================================== -->
+<section id="contact">
+    <div class="wrap">
+        <div class="contact-wrap reveal">
+            <div class="contact-info">
+                <h2>Записаться на занятие</h2>
+                <p id="contactLede"></p>
+                <div class="contact-channels" id="contactChannels">
+                    <!-- генерируются из CONFIG.contact.channels -->
+                </div>
+            </div>
+            <div>
+                <form id="bookingForm" novalidate>
+                    <div class="form-group">
+                        <label for="f-name">Имя</label>
+                        <input id="f-name" name="name" type="text" required placeholder="Как к вам обращаться">
+                    </div>
+                    <div class="form-group">
+                        <label for="f-contact">Telegram, WhatsApp или email</label>
+                        <input id="f-contact" name="contact" type="text" required placeholder="@username или почта">
+                    </div>
+                    <div class="form-group">
+                        <label for="f-level">Текущий уровень</label>
+                        <select id="f-level" name="level">
+                            <option value="Не знаю / нужна диагностика">Не знаю / нужна диагностика</option>
+                            <option value="Начинающий (A1–A2)">Начинающий (A1–A2)</option>
+                            <option value="Средний (B1–B2)">Средний (B1–B2)</option>
+                            <option value="Продвинутый (C1–C2)">Продвинутый (C1–C2)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="f-msg">Цель занятий</label>
+                        <textarea id="f-msg" name="message" placeholder="Например: подготовка к собеседованиям на английском"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Отправить заявку</button>
+                    <p class="form-status" id="formStatus"></p>
+                    <p class="form-note">Кнопка откроет письмо в вашей почтовой программе с уже заполненным текстом — просто нажмите «отправить». Как подключить настоящую форму без этого — см. README.md.</p>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="wrap footer-inner">
+        <span id="footerName"></span>
+        <span>сайт сделан как редактируемый шаблон — см. <span class="mono">README.md</span></span>
+    </div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
