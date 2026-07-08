@@ -174,8 +174,8 @@ const CONFIG = {
         lede: "Оставьте заявку любым удобным способом — я свяжусь в течение дня и предложу время для бесплатного диагностического занятия.",
         channels: [
             {icon:"✈", label:"Telegram", value:"@codelingua", href:"https://t.me/bulbafromrus"},
-            {icon:"☎", label:"WhatsApp", value:"+7 900 000-00-00", href:"https://wa.me/79000000000"},
-            {icon:"✉", label:"Email", value:"hello@codelingua.academy", href:"mailto:hello@codelingua.academy"},
+            {icon:"☎", label:"WhatsApp", value:"+7 929 367-74-81", href:"https://wa.me/79293677481"},
+            {icon:"✉", label:"Email", value:"bulbakovdanila2003@gmail.com", href:"mailto:bulbakovdanila2003@gmial.com"},
         ],
         formEmail: "hello@codelinguae.academy",
     },

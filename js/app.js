@@ -172,26 +172,3 @@ const revealIO = new IntersectionObserver((entries) => {
 }, {threshold: 0.15});
 revealItems.forEach(item => revealIO.observe(item));
 
-// форма — открывает почтовый клиент с заполненным письмом
-const form = document.getElementById("bookingForm");
-const status = document.getElementById("formStatus");
-form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const name = form.name.value.trim();
-    const contact = form.contact.value.trim();
-    if(!name || !contact){
-        status.textContent = "Заполните имя и контакт, пожалуйста.";
-        status.className = "form-status err";
-        return;
-    }
-    const subject = encodeURIComponent(`Заявка на занятие — ${name}`);
-    const body = encodeURIComponent(
-        `Имя: ${name}
-Контакт: ${contact}
-Уровень: ${form.level.value}
-Цель: ${form.message.value || "—"}`
-    );
-    window.location.href = `mailto:${CONFIG.contact.formEmail}?subject=${subject}&body=${body}`;
-    status.textContent = "Открываю почтовый клиент — проверьте, что письмо ушло.";
-    status.className = "form-status ok";
-});
