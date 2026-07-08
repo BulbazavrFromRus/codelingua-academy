@@ -172,3 +172,48 @@ const revealIO = new IntersectionObserver((entries) => {
 }, {threshold: 0.15});
 revealItems.forEach(item => revealIO.observe(item));
 
+// форма — отправляется в фоне (AJAX) на Formspree, без перехода на другую страницу
+const form = document.getElementById("bookingForm");
+const status = document.getElementById("formStatus");
+const submitBtn = form.querySelector('button[type="submit"]');
+
+form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const name = form.name.value.trim();
+    const contact = form.contact.value.trim();
+    if(!name || !contact){
+        status.textContent = "Заполните имя и контакт, пожалуйста.";
+        status.className = "form-status err";
+        return;
+    }
+
+    const originalBtnText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Отправляю…";
+    status.textContent = "";
+    status.className = "form-status";
+
+    try{
+        const response = await fetch(form.action, {
+            method: "POST",
+            body: new FormData(form),
+            headers: { "Accept": "application/json" }
+        });
+
+        if(response.ok){
+            status.textContent = "Спасибо! Заявка отправлена — я свяжусь с вами в течение дня.";
+            status.className = "form-status ok";
+            form.reset();
+        } else {
+            status.textContent = "Не получилось отправить. Попробуйте ещё раз или напишите напрямую в Telegram/WhatsApp.";
+            status.className = "form-status err";
+        }
+    } catch(err){
+        status.textContent = "Нет соединения. Попробуйте ещё раз или напишите напрямую в Telegram/WhatsApp.";
+        status.className = "form-status err";
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalBtnText;
+    }
+});
