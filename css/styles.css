@@ -385,3 +385,84 @@ footer{background:var(--ink); color:var(--text-on-ink-mut); padding:36px 0; bord
 /* reveal-on-scroll */
 .reveal{opacity:0; transform:translateY(16px); transition:opacity .6s ease, transform .6s ease;}
 .reveal.in{opacity:1; transform:translateY(0);}
+
+/* ---------------------------------------------------------------------
+   Wheel of fortune — колесо удачи
+   --------------------------------------------------------------------- */
+.wheel-layout{
+    display:grid; grid-template-columns:auto 1fr; gap:56px; align-items:center; justify-content:center;
+}
+@media (max-width:820px){ .wheel-layout{grid-template-columns:1fr; justify-items:center; text-align:center;} }
+
+.wheel-stage-wrap{
+    position:relative; width:340px; height:340px; flex-shrink:0;
+}
+@media (max-width:480px){ .wheel-stage-wrap{width:280px; height:280px;} }
+
+.wheel-stage{
+    width:100%; height:100%; border-radius:50%;
+    box-shadow:0 24px 60px -20px rgba(20,26,23,.35), 0 0 0 10px var(--paper-card), 0 0 0 13px var(--ink-line);
+}
+.wheel-stage svg{ width:100%; height:100%; display:block; transform:rotate(0deg); }
+.wheel-stage svg text{ user-select:none; }
+
+.wheel-pointer{
+    position:absolute; top:-6px; left:50%; transform:translateX(-50%);
+    width:0; height:0; z-index:5;
+    border-left:14px solid transparent; border-right:14px solid transparent;
+    border-top:24px solid var(--amber);
+    filter:drop-shadow(0 3px 4px rgba(0,0,0,.35));
+}
+.wheel-hub{
+    position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+    width:56px; height:56px; border-radius:50%;
+    background:var(--ink); color:var(--amber);
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-weight:700; font-size:14px;
+    box-shadow:0 0 0 4px var(--paper-card), 0 4px 12px rgba(0,0,0,.3);
+    z-index:4; pointer-events:none;
+}
+
+.wheel-panel{ max-width:400px; display:flex; flex-direction:column; gap:14px; }
+@media (max-width:820px){ .wheel-panel{align-items:center;} }
+
+.wheel-spins-left{ display:flex; align-items:center; gap:10px; font-family:var(--font-mono); font-size:13px; color:var(--text-on-paper-mut); }
+.wheel-dots{ display:inline-flex; gap:6px; }
+.wheel-dot{ width:10px; height:10px; border-radius:50%; background:var(--green); display:inline-block; }
+.wheel-dot.used{ background:var(--paper-line); }
+
+.wheel-note{ font-family:var(--font-mono); font-size:12.5px; color:var(--rose); margin:0; min-height:16px; }
+.wheel-rules{ font-size:14px; color:var(--text-on-paper-mut); margin:0; }
+
+#wheelSpinBtn{ align-self:flex-start; }
+@media (max-width:820px){ #wheelSpinBtn{align-self:center;} }
+#wheelSpinBtn:disabled{ opacity:.5; cursor:not-allowed; transform:none !important; box-shadow:none !important; }
+
+.wheel-result{
+    background:var(--ink); color:var(--text-on-ink); border-radius:var(--radius);
+    padding:22px; display:flex; flex-direction:column; gap:12px;
+}
+.wheel-result.hidden{ display:none; }
+.wheel-result-title{ font-family:var(--font-serif); font-weight:600; font-size:19px; }
+.wheel-result-code{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background:var(--ink-panel); border:1px dashed var(--ink-line); border-radius:8px; padding:12px 16px;
+    font-family:var(--font-mono); font-size:16px; letter-spacing:.05em; color:var(--amber); font-weight:700;
+}
+.wheel-copy-btn{
+    font-family:var(--font-mono); font-size:12px; font-weight:600;
+    background:transparent; border:1px solid var(--ink-line); color:var(--text-on-ink);
+    padding:6px 12px; border-radius:6px; cursor:pointer; transition:border-color .15s ease;
+}
+.wheel-copy-btn:hover{ border-color:var(--green); }
+.wheel-result-note{ font-size:13.5px; color:var(--text-on-ink-mut); margin:0; }
+.wheel-result-cta{ align-self:flex-start; }
+
+.wheel-history{ display:flex; flex-direction:column; gap:6px; }
+.wheel-history-title{ font-family:var(--font-mono); font-size:12px; color:var(--text-on-paper-mut); text-transform:uppercase; letter-spacing:.08em; margin-bottom:2px; }
+.wheel-history-item{
+    display:flex; justify-content:space-between; gap:10px; font-family:var(--font-mono); font-size:12.5px;
+    padding:8px 12px; background:var(--paper-card); border:1px solid var(--paper-line); border-radius:6px;
+    color:var(--text-on-paper-mut);
+}
+.wheel-history-code{ color:var(--text-on-paper); font-weight:700; }

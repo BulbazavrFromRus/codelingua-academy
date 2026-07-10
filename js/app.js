@@ -148,7 +148,7 @@ tabs.querySelectorAll("a").forEach(a => a.addEventListener("click", () => {
 }));
 
 // подсветка активной вкладки при скролле
-const sections = ["top","about","courses","process","reviews","pricing","faq","contact"].map(id => document.getElementById(id));
+const sections = ["top","about","courses","process","reviews","pricing","faq","wheel","contact"].map(id => document.getElementById(id));
 const navLinks = Array.from(tabs.querySelectorAll("a"));
 const io = new IntersectionObserver((entries) => {
     entries.forEach(entry => {

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CodeLingua Academy — английский язык с репетитором</title>
+    <title>CodeLinguae Academy — английский язык с репетитором</title>
     <meta name="description" content="CodeLinguae Academy — индивидуальные занятия английским языком. Разговорный, бизнес-английский, подготовка к экзаменам и английский для IT-специалистов.">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#60;/&#62;</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,10 +24,11 @@
             <li><a href="#top" class="active">Главная<span class="ext"></span></a></li>
             <li><a href="#about">О школе<span class="ext"></span></a></li>
             <li><a href="#courses">Курсы<span class="ext"></span></a></li>
-            <li><a href="#process">Обучение<span class="ext"></span></a></li>
+            <li><a href="#process">Процесс<span class="ext"></span></a></li>
             <li><a href="#reviews">Отзывы<span class="ext"></span></a></li>
             <li><a href="#pricing">Цены<span class="ext"></span></a></li>
             <li><a href="#faq">Частые вопросы<span class="ext"></span></a></li>
+            <li><a href="#wheel">Колесо фортуны<span class="ext"></span></a></li>
             <li><a href="#contact">Контакты<span class="ext"></span></a></li>
         </ul>
         <a href="#contact" class="nav-cta">Записаться →</a>
@@ -58,7 +59,7 @@
                     <span class="term-dot" style="background:#e5716a"></span>
                     <span class="term-dot" style="background:#e5ac3f"></span>
                     <span class="term-dot" style="background:#6fbf8c"></span>
-                    <span class="fname">grammar_check.js</span>
+                    <span class="fname"></span>
                 </div>
                 <div class="term-body" id="termBody">
                     <!-- заполняется через JS: parseSentence(...) -->
@@ -100,7 +101,7 @@
 <section class="section-alt" id="courses">
     <div class="wrap">
         <div class="section-head reveal">
-            <p class="section-tag"><span class="path">~/</span>courses<span class="ext">.json</span></p>
+            <p class="section-tag"><span class="path"></span><span class="ext"></span></p>
             <h2>Форматы занятий</h2>
             <p>Каждый курс — отдельная программа: свой словарь, свои задачи, свой темп. Начинаем с диагностики уровня и подбираем нужный.</p>
         </div>
@@ -116,7 +117,7 @@
 <section id="process">
     <div class="wrap">
         <div class="section-head reveal">
-            <p class="section-tag"><span class="path">~/</span>process<span class="ext">.yml</span></p>
+            <p class="section-tag"><span class="path"></span><span class="ext"></span></p>
             <h2>Как проходит старт</h2>
         </div>
         <div class="steps" id="stepsGrid">
@@ -131,7 +132,7 @@
 <section class="section-alt" id="reviews">
     <div class="wrap">
         <div class="section-head reveal">
-            <p class="section-tag"><span class="path">~/</span>reviews<span class="ext">.log</span></p>
+            <p class="section-tag"><span class="path"></span><span class="ext"></span></p>
             <h2>Что говорят ученики</h2>
         </div>
         <div class="review-grid" id="reviewGrid">
@@ -146,7 +147,7 @@
 <section id="pricing">
     <div class="wrap">
         <div class="section-head reveal">
-            <p class="section-tag"><span class="path">~/</span>pricing<span class="ext">.csv</span></p>
+            <p class="section-tag"><span class="path"></span><span class="ext"></span></p>
             <h2>Стоимость занятий</h2>
             <p>Оплата пакетами выгоднее разовых занятий. Первое занятие — диагностическое и бесплатное.</p>
         </div>
@@ -162,11 +163,47 @@
 <section class="section-alt" id="faq">
     <div class="wrap">
         <div class="section-head reveal">
-            <p class="section-tag"><span class="path">~/</span>faq<span class="ext">.txt</span></p>
+            <p class="section-tag"><span class="path"></span><span class="ext"></span></p>
             <h2>Частые вопросы</h2>
         </div>
         <div class="faq-list" id="faqList">
             <!-- генерируются из CONFIG.faq -->
+        </div>
+    </div>
+</section>
+
+<!-- =====================================================================
+     WHEEL OF FORTUNE
+     ===================================================================== -->
+<section id="wheel">
+    <div class="wrap">
+        <div class="section-head reveal">
+            <p class="section-tag"><span class="path"></span><span class="ext"></span></p>
+            <h2 id="wheelTitle"></h2>
+            <p id="wheelSubtitle"></p>
+        </div>
+
+        <div class="wheel-layout reveal">
+            <div class="wheel-stage-wrap">
+                <div class="wheel-pointer" aria-hidden="true"></div>
+                <div class="wheel-stage" id="wheelStage">
+                    <!-- SVG колеса собирается через JS из CONFIG.wheel.segments -->
+                </div>
+                <div class="wheel-hub">&lt;/&gt;</div>
+            </div>
+
+            <div class="wheel-panel">
+                <div class="wheel-spins-left" id="wheelSpinsLeft"></div>
+                <button class="btn btn-primary" id="wheelSpinBtn">Крутить колесо</button>
+                <p class="wheel-note" id="wheelCooldownNote"></p>
+                <p class="wheel-rules" id="wheelRules"></p>
+
+                <div class="wheel-result hidden" id="wheelResult"></div>
+
+                <div class="wheel-history" id="wheelHistory">
+                    <!-- история прошлых призов этого посетителя -->
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -219,11 +256,12 @@
 <footer>
     <div class="wrap footer-inner">
         <span id="footerName"></span>
-        <span>сайт сделан как редактируемый шаблон — см. <span class="mono">README.md</span></span>
+        <span><span class="mono"></span></span>
     </div>
 </footer>
 
 <script src="js/config.js"></script>
 <script src="js/app.js"></script>
+<script src="js/wheel.js"></script>
 </body>
 </html>
