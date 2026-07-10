@@ -41,7 +41,6 @@ function typeSentence(){
         const tk = tokens[i];
         const cls = tk.t === "plain" ? "" : `tok-${tk.t}`;
         const span = el("span", cls ? {class:cls} : {}, esc(tk.w));
-        // remove previous cursor
         const oldCursor = line2.querySelector(".cursor");
         if(oldCursor) oldCursor.remove();
         line2.appendChild(span);
@@ -55,20 +54,32 @@ function typeSentence(){
 }
 typeSentence();
 
+// ---- ticker strip (генерируется из названий курсов) ----
+(function buildTicker(){
+    const track = document.getElementById("tickerTrack");
+    if(!track) return;
+    const items = CONFIG.courses.map(c => `<b>${esc(c.title)}</b>&nbsp; ${esc(c.level)}`);
+    const half = items.map(t => `<span>${t}</span><span class="tick-sep">✳</span>`).join("");
+    track.innerHTML = half + half; // дублируем для бесшовной анимации
+})();
+
 // ---- about ----
 const aboutCard = document.getElementById("aboutCard");
-aboutCard.innerHTML = `<div style="font-size:16px; font-weight:700; color:var(--text-on-ink); margin-bottom:2px;">${esc(CONFIG.tutor.name)}</div>
-<div style="color:var(--green); font-size:12px; margin-bottom:10px;">${esc(CONFIG.tutor.role)}</div>` +
-    CONFIG.tutor.facts.map(f => `<dt>${esc(f.k)}</dt><dd>${esc(f.v)}</dd>`).join("");
+aboutCard.innerHTML = `
+  <div class="tutor-name">${esc(CONFIG.tutor.name)}</div>
+  <div class="tutor-role">${esc(CONFIG.tutor.role)}</div>
+  <dl>${CONFIG.tutor.facts.map(f => `<dt>${esc(f.k)}</dt><dd>${esc(f.v)}</dd>`).join("")}</dl>
+`;
 
 document.getElementById("aboutBody").innerHTML = CONFIG.about.paragraphs.map(p => `<p>${esc(p)}</p>`).join("");
 
 // ---- courses ----
 const courseGrid = document.getElementById("courseGrid");
-CONFIG.courses.forEach(c => {
+CONFIG.courses.forEach((c, idx) => {
     const card = el("div", {class:`course-card${c.featured ? " featured" : ""}`});
+    const num = String(idx + 1).padStart(2, "0");
     card.innerHTML = `
-    ${c.badge ? `<span class="course-badge">${esc(c.badge)}</span>` : `<span class="course-icon">${esc(c.icon)}</span>`}
+    ${c.badge ? `<span class="course-badge">${esc(c.badge)}</span>` : `<span class="course-index">/${num}</span>`}
     <h3 class="course-title">${esc(c.title)}</h3>
     <p class="course-desc">${esc(c.desc)}</p>
     <div class="course-meta"><span>${esc(c.level)}</span><span>${esc(c.duration)}</span></div>
@@ -109,7 +120,7 @@ CONFIG.plans.forEach(p => {
     <div class="price-name">${esc(p.name)}</div>
     <div class="price-amount">${esc(p.price)} ₽ <span>/ ${esc(p.unit)}</span></div>
     <ul class="price-list">${p.features.map(f => `<li>${esc(f)}</li>`).join("")}</ul>
-    <a href="#contact" class="btn btn-primary" style="justify-content:center;">Выбрать</a>
+    <a href="#contact" class="btn ${p.reco ? "btn-accent" : "btn-ghost"}">Выбрать</a>
   `;
     priceGrid.appendChild(card);
 });
@@ -124,10 +135,17 @@ CONFIG.faq.forEach((f, idx) => {
 });
 
 // ---- contact channels ----
+// SVG-иконки по названию канала (вместо emoji — для единого стиля)
+const CHANNEL_ICONS = {
+    telegram: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4 20-7z"/></svg>`,
+    whatsapp: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>`,
+    email: `<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>`,
+};
 const contactChannels = document.getElementById("contactChannels");
 CONFIG.contact.channels.forEach(c => {
     const a = el("a", {class:"channel", href:c.href, target:"_blank", rel:"noopener"});
-    a.innerHTML = `<span class="ic">${esc(c.icon)}</span><span>${esc(c.label)}: ${esc(c.value)}</span>`;
+    const icon = CHANNEL_ICONS[c.label.toLowerCase()] || esc(c.icon);
+    a.innerHTML = `<span class="ic">${icon}</span><span><span class="ch-label">${esc(c.label)}</span>${esc(c.value)}</span>`;
     contactChannels.appendChild(a);
 });
 

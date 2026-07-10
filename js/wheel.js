@@ -1,300 +1,240 @@
 /* =========================================================================
-   КОЛЕСО ФОРТУНЫ  (js/wheel.js)
+   🎡 КОЛЕСО ФОРТУНЫ  (js/wheel.js)
    -------------------------------------------------------------------------
-   Читает CONFIG.wheel (из config.js) и строит рабочее колесо:
-   - рисует SVG-сегменты по весам призов
-   - крутит колесо на честный взвешенный случайный приз
-   - запоминает попытки в localStorage браузера посетителя (3 прокрута,
-     потом блокировка на неделю — настраивается в CONFIG.wheel)
-   - показывает результат и промокод, ведёт историю прошлых призов
-
-   Если захотите изменить призы, лимит попыток или срок блокировки —
-   правьте CONFIG.wheel в файле config.js, а не этот файл.
+   Строит SVG-колесо из CONFIG.wheel.segments, крутит его с учётом весов
+   (weight), ограничивает число попыток (spinLimit) и блокирует колесо
+   на cooldownDays дней. Результаты и промокоды хранятся в localStorage.
    ========================================================================= */
-
 (function(){
-    const WHEEL_STORAGE_KEY = "codelinguae_wheel_v1";
-    const wheelCfg = CONFIG.wheel;
-    const cooldownMs = (wheelCfg.cooldownDays || 7) * 24 * 60 * 60 * 1000;
-
-    // ---- заголовки блока ----
-    document.getElementById("wheelTitle").textContent = wheelCfg.title;
-    document.getElementById("wheelSubtitle").textContent = wheelCfg.subtitle;
-    document.getElementById("wheelRules").textContent = wheelCfg.rulesText;
-
-    // -----------------------------------------------------------------------
-    // Хранилище состояния в браузере посетителя
-    // -----------------------------------------------------------------------
-    function loadState(){
-        try{
-            const raw = localStorage.getItem(WHEEL_STORAGE_KEY);
-            if(!raw) return {spinsUsed:0, cycleStart:null, history:[]};
-            const parsed = JSON.parse(raw);
-            return {
-                spinsUsed: Number(parsed.spinsUsed) || 0,
-                cycleStart: parsed.cycleStart || null,
-                history: Array.isArray(parsed.history) ? parsed.history : [],
-            };
-        }catch(e){
-            return {spinsUsed:0, cycleStart:null, history:[]};
-        }
-    }
-    function saveState(state){
-        try{ localStorage.setItem(WHEEL_STORAGE_KEY, JSON.stringify(state)); }catch(e){ /* хранилище недоступно — просто не сохраняем */ }
-    }
-    function refreshCooldown(state){
-        if(state.cycleStart && (Date.now() - state.cycleStart) >= cooldownMs){
-            state.spinsUsed = 0;
-            state.cycleStart = null;
-            saveState(state);
-        }
-        return state;
-    }
-
-    let state = refreshCooldown(loadState());
-
-    // -----------------------------------------------------------------------
-    // Построение SVG-колеса из сегментов
-    // -----------------------------------------------------------------------
-    const segments = wheelCfg.segments;
-    const totalWeight = segments.reduce((sum, s) => sum + s.weight, 0);
-
-    const SVG_NS = "http://www.w3.org/2000/svg";
-    const CX = 200, CY = 200, R = 192;
-
-    function polarPoint(radius, angleDeg){
-        const rad = (angleDeg * Math.PI) / 180;
-        return {
-            x: CX + radius * Math.sin(rad),
-            y: CY - radius * Math.cos(rad),
-        };
-    }
-
-    function buildWheelSvg(){
-        const svg = document.createElementNS(SVG_NS, "svg");
-        svg.setAttribute("viewBox", "0 0 400 400");
-        svg.setAttribute("id", "wheelSvg");
-
-        let cursor = 0;
-        segments.forEach((seg) => {
-            const angleSize = (seg.weight / totalWeight) * 360;
-            const start = cursor;
-            const end = cursor + angleSize;
-            const mid = start + angleSize / 2;
-            cursor = end;
-
-            const p1 = polarPoint(R, start);
-            const p2 = polarPoint(R, end);
-            const largeArc = angleSize > 180 ? 1 : 0;
-
-            const path = document.createElementNS(SVG_NS, "path");
-            const d = `M ${CX},${CY} L ${p1.x.toFixed(2)},${p1.y.toFixed(2)} A ${R},${R} 0 ${largeArc} 1 ${p2.x.toFixed(2)},${p2.y.toFixed(2)} Z`;
-            path.setAttribute("d", d);
-            path.setAttribute("fill", seg.color);
-            path.setAttribute("stroke", "#141a17");
-            path.setAttribute("stroke-width", "2");
-            svg.appendChild(path);
-
-            // текст сегмента — вдоль радиуса, читается от центра наружу
-            const textRadius = angleSize < 28 ? R * 0.82 : R * 0.66;
-            const tp = polarPoint(textRadius, mid);
-            const text = document.createElementNS(SVG_NS, "text");
-            text.setAttribute("x", tp.x.toFixed(2));
-            text.setAttribute("y", tp.y.toFixed(2));
-            text.setAttribute("text-anchor", "middle");
-            text.setAttribute("transform", `rotate(${mid.toFixed(2)} ${tp.x.toFixed(2)} ${tp.y.toFixed(2)})`);
-            text.setAttribute("fill", "#141a17");
-            text.setAttribute("font-family", "JetBrains Mono, monospace");
-            text.setAttribute("font-weight", "700");
-            text.setAttribute("font-size", angleSize < 22 ? "11" : "13.5");
-
-            // если фраза длинная — переносим в два тспана
-            const words = seg.label.split(" ");
-            if(words.length > 1 && seg.label.length > 12){
-                const mid1 = Math.ceil(words.length / 2);
-                const line1 = words.slice(0, mid1).join(" ");
-                const line2 = words.slice(mid1).join(" ");
-                const tspan1 = document.createElementNS(SVG_NS, "tspan");
-                tspan1.setAttribute("x", tp.x.toFixed(2));
-                tspan1.setAttribute("dy", "-4");
-                tspan1.textContent = line1;
-                const tspan2 = document.createElementNS(SVG_NS, "tspan");
-                tspan2.setAttribute("x", tp.x.toFixed(2));
-                tspan2.setAttribute("dy", "13");
-                tspan2.textContent = line2;
-                text.appendChild(tspan1);
-                text.appendChild(tspan2);
-            } else {
-                text.textContent = seg.label;
-            }
-
-            svg.appendChild(text);
-        });
-
-        return svg;
-    }
-
+    const W = CONFIG.wheel;
     const stage = document.getElementById("wheelStage");
-    stage.appendChild(buildWheelSvg());
-    const wheelSvg = document.getElementById("wheelSvg");
-
-    // -----------------------------------------------------------------------
-    // Взвешенный случайный выбор приза (сегменты с меньшим "weight" реже выпадают)
-    // -----------------------------------------------------------------------
-    function pickSegmentIndex(){
-        let r = Math.random() * totalWeight;
-        for(let i = 0; i < segments.length; i++){
-            if(r < segments[i].weight) return i;
-            r -= segments[i].weight;
-        }
-        return segments.length - 1;
-    }
-
-    function segmentAngles(index){
-        let cursor = 0;
-        for(let i = 0; i < index; i++){
-            cursor += (segments[i].weight / totalWeight) * 360;
-        }
-        const size = (segments[index].weight / totalWeight) * 360;
-        return {start: cursor, size};
-    }
-
-    function generateCode(){
-        const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-        let suffix = "";
-        for(let i = 0; i < 4; i++) suffix += chars[Math.floor(Math.random() * chars.length)];
-        return `${wheelCfg.codePrefix}-${suffix}`;
-    }
-
-    // -----------------------------------------------------------------------
-    // UI: индикатор оставшихся попыток, состояние кнопки, история
-    // -----------------------------------------------------------------------
     const spinBtn = document.getElementById("wheelSpinBtn");
     const spinsLeftEl = document.getElementById("wheelSpinsLeft");
-    const cooldownNoteEl = document.getElementById("wheelCooldownNote");
+    const cooldownNote = document.getElementById("wheelCooldownNote");
     const resultEl = document.getElementById("wheelResult");
     const historyEl = document.getElementById("wheelHistory");
 
-    function formatDate(ts){
-        return new Date(ts).toLocaleString("ru-RU", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit"
-        });
+    document.getElementById("wheelTitle").textContent = W.title;
+    document.getElementById("wheelSubtitle").textContent = W.subtitle;
+    document.getElementById("wheelRules").textContent = W.rulesText;
+
+    // ---------------- state (localStorage) ----------------
+    const LS_KEY = "cl_wheel_v1";
+    function loadState(){
+        try{
+            const raw = localStorage.getItem(LS_KEY);
+            if(raw) return JSON.parse(raw);
+        }catch(e){ /* приватный режим и т.п. */ }
+        return { spinsUsed: 0, lockedUntil: 0, history: [] };
+    }
+    function saveState(st){
+        try{ localStorage.setItem(LS_KEY, JSON.stringify(st)); }catch(e){}
+    }
+    let state = loadState();
+
+    // если срок блокировки прошёл — сбрасываем попытки
+    if(state.lockedUntil && Date.now() > state.lockedUntil){
+        state.spinsUsed = 0;
+        state.lockedUntil = 0;
+        saveState(state);
     }
 
-    function renderSpinsLeft(){
-        const total = wheelCfg.spinLimit;
-        const used = Math.min(state.spinsUsed, total);
-        let dots = "";
-        for(let i = 0; i < total; i++){
-            dots += `<span class="wheel-dot ${i < used ? "used" : ""}"></span>`;
+    // ---------------- геометрия колеса ----------------
+    const totalWeight = W.segments.reduce((s, seg) => s + seg.weight, 0);
+    // границы сегментов в градусах, по часовой стрелке от «12 часов»
+    const bounds = [];
+    let acc = 0;
+    W.segments.forEach(seg => {
+        const start = (acc / totalWeight) * 360;
+        acc += seg.weight;
+        const end = (acc / totalWeight) * 360;
+        bounds.push({start, end, mid: (start + end) / 2});
+    });
+
+    function polar(cx, cy, r, angleDeg){
+        // угол от «12 часов» по часовой стрелке
+        const rad = (angleDeg - 90) * Math.PI / 180;
+        return [cx + r * Math.cos(rad), cy + r * Math.sin(rad)];
+    }
+
+    function buildWheel(){
+        const SIZE = 440, C = SIZE / 2, R = C - 6;
+        const svgNS = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(svgNS, "svg");
+        svg.setAttribute("viewBox", `0 0 ${SIZE} ${SIZE}`);
+        svg.setAttribute("role", "img");
+        svg.setAttribute("aria-label", W.title);
+
+        // внешняя обводка
+        const ring = document.createElementNS(svgNS, "circle");
+        ring.setAttribute("cx", C); ring.setAttribute("cy", C); ring.setAttribute("r", R + 4);
+        ring.setAttribute("fill", "#221e1a");
+        svg.appendChild(ring);
+
+        W.segments.forEach((seg, i) => {
+            const b = bounds[i];
+            const [x1, y1] = polar(C, C, R, b.start);
+            const [x2, y2] = polar(C, C, R, b.end);
+            const largeArc = (b.end - b.start) > 180 ? 1 : 0;
+
+            const path = document.createElementNS(svgNS, "path");
+            path.setAttribute("d", `M ${C} ${C} L ${x1} ${y1} A ${R} ${R} 0 ${largeArc} 1 ${x2} ${y2} Z`);
+            path.setAttribute("fill", seg.color);
+            path.setAttribute("stroke", "#191613");
+            path.setAttribute("stroke-width", "2");
+            svg.appendChild(path);
+
+            // подпись сегмента вдоль радиуса
+            const label = seg.label.replace(/\s*🎉\s*/g, "");
+            const [tx, ty] = polar(C, C, R * 0.62, b.mid);
+            const text = document.createElementNS(svgNS, "text");
+            text.setAttribute("x", tx);
+            text.setAttribute("y", ty);
+            text.setAttribute("fill", "#191613");
+            text.setAttribute("font-family", "'JetBrains Mono', monospace");
+            text.setAttribute("font-size", "12.5");
+            text.setAttribute("font-weight", "600");
+            text.setAttribute("text-anchor", "middle");
+            text.setAttribute("dominant-baseline", "middle");
+            // поворачиваем текст вдоль радиуса
+            let rot = b.mid;
+            if(rot > 90 && rot < 270) rot += 180; // не «вверх ногами»
+            text.setAttribute("transform", `rotate(${rot} ${tx} ${ty})`);
+
+            // перенос длинных подписей на две строки
+            const words = label.split(" ");
+            if(words.length > 1 && label.length > 12){
+                const mid = Math.ceil(words.length / 2);
+                const l1 = words.slice(0, mid).join(" ");
+                const l2 = words.slice(mid).join(" ");
+                const t1 = document.createElementNS(svgNS, "tspan");
+                t1.setAttribute("x", tx); t1.setAttribute("dy", "-0.55em"); t1.textContent = l1;
+                const t2 = document.createElementNS(svgNS, "tspan");
+                t2.setAttribute("x", tx); t2.setAttribute("dy", "1.15em"); t2.textContent = l2;
+                text.append(t1, t2);
+            } else {
+                text.textContent = label;
+            }
+            svg.appendChild(text);
+        });
+
+        stage.innerHTML = "";
+        stage.appendChild(svg);
+    }
+    buildWheel();
+
+    // ---------------- выбор приза по весам ----------------
+    function pickSegment(){
+        let r = Math.random() * totalWeight;
+        for(let i = 0; i < W.segments.length; i++){
+            r -= W.segments[i].weight;
+            if(r <= 0) return i;
         }
-        spinsLeftEl.innerHTML = `<span class="wheel-dots">${dots}</span><span class="wheel-dots-label">${total - used} из ${total} попыток осталось</span>`;
+        return W.segments.length - 1;
+    }
+
+    function makeCode(){
+        const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+        let s = "";
+        for(let i = 0; i < 5; i++) s += chars[Math.floor(Math.random() * chars.length)];
+        return `${W.codePrefix}-${s}`;
+    }
+
+    // ---------------- UI-состояние ----------------
+    function isLocked(){
+        return state.lockedUntil && Date.now() < state.lockedUntil;
+    }
+    function spinsLeft(){
+        return Math.max(0, W.spinLimit - state.spinsUsed);
+    }
+    function fmtDate(ts){
+        return new Date(ts).toLocaleDateString("ru-RU", {day:"numeric", month:"long"});
+    }
+
+    function renderPanel(){
+        if(isLocked()){
+            spinsLeftEl.innerHTML = `Попытки закончились`;
+            cooldownNote.textContent = `Колесо снова откроется ${fmtDate(state.lockedUntil)}.`;
+            spinBtn.disabled = true;
+        } else {
+            spinsLeftEl.innerHTML = `Осталось попыток: <b>${spinsLeft()} из ${W.spinLimit}</b>`;
+            cooldownNote.textContent = "";
+            spinBtn.disabled = false;
+        }
+        renderHistory();
     }
 
     function renderHistory(){
-        if(!state.history.length){
-            historyEl.innerHTML = "";
-            return;
-        }
-        const items = state.history.slice(0, 5).map(h => `
-      <div class="wheel-history-item">
-        <span class="wheel-history-label">${escapeHtml(h.label)}</span>
-        <span class="wheel-history-code">${escapeHtml(h.code)}</span>
-        <span class="wheel-history-date">${formatDate(h.at)}</span>
-      </div>
-    `).join("");
-        historyEl.innerHTML = `<div class="wheel-history-title">Ваши призы</div>${items}`;
+        historyEl.innerHTML = "";
+        if(!state.history.length) return;
+        const title = document.createElement("p");
+        title.className = "wh-title";
+        title.textContent = "Ваши призы";
+        historyEl.appendChild(title);
+        state.history.slice().reverse().forEach(h => {
+            const row = document.createElement("div");
+            row.className = "wh-item";
+            const icon = h.type === "discount" ? "%" : "+";
+            row.innerHTML = `<span>[${icon}] ${escHtml(h.label)}</span><span class="wh-code">${escHtml(h.code)}</span>`;
+            historyEl.appendChild(row);
+        });
     }
 
-    function escapeHtml(s){
+    function escHtml(s){
         return String(s).replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));
     }
 
-    function updateLockUI(){
-        const locked = state.spinsUsed >= wheelCfg.spinLimit;
-        spinBtn.disabled = locked;
-        if(locked && state.cycleStart){
-            const nextDate = state.cycleStart + cooldownMs;
-            cooldownNoteEl.textContent = `Попытки закончились. Колесо снова будет доступно ${formatDate(nextDate)}.`;
-            spinBtn.textContent = "Колесо заблокировано";
-        } else {
-            cooldownNoteEl.textContent = "";
-            spinBtn.textContent = "Крутить колесо";
-        }
-    }
-
-    renderSpinsLeft();
-    renderHistory();
-    updateLockUI();
-
-    // -----------------------------------------------------------------------
-    // Вращение
-    // -----------------------------------------------------------------------
-    let totalRotation = 0;
+    // ---------------- вращение ----------------
+    let currentRotation = 0;
     let spinning = false;
 
     spinBtn.addEventListener("click", () => {
-        if(spinning || state.spinsUsed >= wheelCfg.spinLimit) return;
+        if(spinning || isLocked()) return;
+        if(spinsLeft() <= 0) return;
+
         spinning = true;
         spinBtn.disabled = true;
         resultEl.classList.add("hidden");
-        resultEl.innerHTML = "";
 
-        const index = pickSegmentIndex();
-        const {start, size} = segmentAngles(index);
-        const jitter = (Math.random() - 0.5) * size * 0.6; // небольшое смещение внутри сектора, но не выходя за его границы
-        const segMid = start + size / 2 + jitter;
+        const idx = pickSegment();
+        const b = bounds[idx];
+        // случайная точка внутри сегмента (с отступом от краёв)
+        const span = b.end - b.start;
+        const target = b.start + span * (0.2 + Math.random() * 0.6);
+        // сколько нужно повернуть колесо, чтобы target оказался под стрелкой сверху
+        const baseTurns = 5 * 360;
+        const needed = (360 - target) % 360;
+        // добираем до needed от текущего положения, всегда вперёд
+        const currentMod = ((currentRotation % 360) + 360) % 360;
+        let delta = needed - currentMod;
+        if(delta <= 0) delta += 360;
+        currentRotation += baseTurns + delta;
 
-        const rotationMod = (360 - segMid + 360) % 360;
-        const currentMod = ((totalRotation % 360) + 360) % 360;
-        const deltaToAdd = (rotationMod - currentMod + 360) % 360;
-        const extraSpins = 360 * (5 + Math.floor(Math.random() * 2)); // 5-6 полных оборотов для эффекта
+        stage.style.transform = `rotate(${currentRotation}deg)`;
 
-        totalRotation += extraSpins + deltaToAdd;
+        const seg = W.segments[idx];
+        const code = makeCode();
 
-        wheelSvg.style.transition = "transform 4.2s cubic-bezier(0.14, 0.72, 0.12, 1)";
-        wheelSvg.style.transform = `rotate(${totalRotation}deg)`;
-
-        setTimeout(() => {
+        stage.addEventListener("transitionend", function onEnd(){
+            stage.removeEventListener("transitionend", onEnd);
             spinning = false;
-            const seg = segments[index];
-            const code = generateCode();
 
             state.spinsUsed += 1;
-            if(!state.cycleStart) state.cycleStart = Date.now();
-            state.history.unshift({label: seg.label, code, at: Date.now()});
-            state.history = state.history.slice(0, 5);
+            state.history.push({label: seg.label, type: seg.type, code, ts: Date.now()});
+            if(state.spinsUsed >= W.spinLimit){
+                state.lockedUntil = Date.now() + W.cooldownDays * 24 * 60 * 60 * 1000;
+            }
             saveState(state);
 
             resultEl.innerHTML = `
-        <div class="wheel-result-title">🎉 Ваш приз: ${escapeHtml(seg.label)}</div>
-        <div class="wheel-result-code">
-          <span>${escapeHtml(code)}</span>
-          <button type="button" class="wheel-copy-btn" id="wheelCopyBtn">Скопировать</button>
-        </div>
-        <p class="wheel-result-note">Назовите этот код или покажите скриншот при записи на занятие — я применю приз вручную.</p>
-        <a href="#contact" class="btn btn-ghost wheel-result-cta">Записаться и использовать приз →</a>
-      `;
+              <p class="wr-label">Ваш выигрыш</p>
+              <p class="wr-prize">${escHtml(seg.label)}</p>
+              <span class="wr-code">${escHtml(code)}</span>
+            `;
             resultEl.classList.remove("hidden");
-
-            const copyBtn = document.getElementById("wheelCopyBtn");
-            copyBtn.addEventListener("click", async () => {
-                try{
-                    await navigator.clipboard.writeText(code);
-                    copyBtn.textContent = "Скопировано ✓";
-                    setTimeout(() => { copyBtn.textContent = "Скопировать"; }, 2000);
-                }catch(e){
-                    copyBtn.textContent = "Скопируйте вручную";
-                }
-            });
-
-            renderSpinsLeft();
-            renderHistory();
-            updateLockUI();
-        }, 4300);
+            renderPanel();
+        });
     });
+
+    renderPanel();
 })();

@@ -8,225 +8,216 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#60;/&#62;</text></svg>">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&family=Literata:ital,opsz,wght@0,18..144,400;0,18..144,500;0,18..144,600;1,18..144,400&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500;1,9..144,600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-<!-- =====================================================================
+<!-- ===================================================================
      HEADER
-     ===================================================================== -->
-<header>
+     =================================================================== -->
+<header id="siteHeader">
     <div class="nav-inner">
         <a href="#top" class="logo"><span class="bracket">&lt;</span>CodeLinguae<span class="dot">.</span>Academy<span class="bracket">/&gt;</span></a>
-        <ul class="tabs" id="tabs">
-            <li><a href="#top" class="active">Главная<span class="ext"></span></a></li>
-            <li><a href="#about">О школе<span class="ext"></span></a></li>
-            <li><a href="#courses">Курсы<span class="ext"></span></a></li>
-            <li><a href="#process">Процесс<span class="ext"></span></a></li>
-            <li><a href="#reviews">Отзывы<span class="ext"></span></a></li>
-            <li><a href="#pricing">Цены<span class="ext"></span></a></li>
-            <li><a href="#faq">Частые вопросы<span class="ext"></span></a></li>
-            <li><a href="#wheel">Колесо фортуны<span class="ext"></span></a></li>
-            <li><a href="#contact">Контакты<span class="ext"></span></a></li>
-        </ul>
-        <a href="#contact" class="nav-cta">Записаться →</a>
+        <nav aria-label="Основная навигация">
+            <ul class="tabs" id="tabs">
+                <li><a href="#top" class="active">Главная</a></li>
+                <li><a href="#about">О школе</a></li>
+                <li><a href="#courses">Курсы</a></li>
+                <li><a href="#process">Процесс</a></li>
+                <li><a href="#reviews">Отзывы</a></li>
+                <li><a href="#pricing">Цены</a></li>
+                <li><a href="#faq">Вопросы</a></li>
+                <li><a href="#wheel">Колесо удачи</a></li>
+                <li><a href="#contact">Контакты</a></li>
+            </ul>
+        </nav>
+        <a href="#contact" class="nav-cta">Записаться <span aria-hidden="true">&rarr;</span></a>
         <button class="burger" id="burger" aria-label="Открыть меню" aria-expanded="false">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
         </button>
     </div>
 </header>
 
-<!-- =====================================================================
-     HERO
-     ===================================================================== -->
-<section class="hero" id="top">
-    <div class="wrap hero-grid">
-        <div>
-            <p class="eyebrow"></p>
-            <h1 id="heroTitle"></h1>
-            <p class="lede" id="heroLede"></p>
-            <div class="hero-ctas">
-                <a href="#contact" class="btn btn-primary">Пробное занятие бесплатно</a>
-                <a href="#courses" class="btn btn-ghost">Смотреть курсы</a>
-                <a href="#wheel" class="btn btn-red-wheel-button">🎁 Попытай удачу и выиграй приз</a>
-            </div>
-        </div>
+<main>
 
-        <div>
-            <div class="term">
-                <div class="term-bar">
-                    <span class="term-dot" style="background:#e5716a"></span>
-                    <span class="term-dot" style="background:#e5ac3f"></span>
-                    <span class="term-dot" style="background:#6fbf8c"></span>
-                    <span class="fname"></span>
+    <!-- ===================================================================
+         HERO
+         =================================================================== -->
+    <section class="hero" id="top">
+        <div class="wrap hero-grid">
+            <div class="hero-copy">
+                <p class="eyebrow"><span class="eyebrow-dash" aria-hidden="true"></span>Индивидуальные занятия онлайн</p>
+                <h1 id="heroTitle" class="text-balance"></h1>
+                <p class="lede" id="heroLede"></p>
+                <div class="hero-ctas">
+                    <a href="#contact" class="btn btn-primary">Пробное занятие — бесплатно</a>
+                    <a href="#courses" class="btn btn-ghost">Смотреть курсы</a>
                 </div>
-                <div class="term-body" id="termBody">
-                    <!-- заполняется через JS: parseSentence(...) -->
+                <a href="#wheel" class="hero-wheel-link">
+                    <span class="hero-wheel-spark" aria-hidden="true">&#10038;</span>
+                    Крутите колесо удачи — выиграйте скидку или бонус
+                    <span aria-hidden="true">&rarr;</span>
+                </a>
+            </div>
+
+            <div class="hero-visual">
+                <div class="term">
+                    <div class="term-bar">
+                        <span class="term-dot"></span>
+                        <span class="term-dot"></span>
+                        <span class="term-dot"></span>
+                        <span class="fname">sentence_parser.en</span>
+                    </div>
+                    <div class="term-body" id="termBody"></div>
                 </div>
-            </div>
-            <div class="legend">
-                <span><i style="background:var(--blue)"></i> существительное</span>
-                <span><i style="background:var(--green)"></i> глагол</span>
-                <span><i style="background:var(--amber)"></i> прилагательное</span>
-                <span><i style="background:var(--rose)"></i> союз</span>
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- =====================================================================
-     ABOUT
-     ===================================================================== -->
-<section id="about">
-    <div class="wrap">
-        <div class="section-head reveal">
-            <p class="section-tag"><span class="path"></span><span class="ext"></span></p>
-            <h2>Кто ведёт занятия</h2>
-        </div>
-        <div class="about-grid">
-            <div class="about-card reveal" id="aboutCard">
-                <!-- заполняется из CONFIG.tutor -->
-            </div>
-            <div class="about-body reveal" id="aboutBody">
-                <!-- заполняется из CONFIG.about.paragraphs -->
-            </div>
-        </div>
-    </div>
-</section>
-
-<!-- =====================================================================
-     COURSES
-     ===================================================================== -->
-<section class="section-alt" id="courses">
-    <div class="wrap">
-        <div class="section-head reveal">
-            <p class="section-tag"><span class="path"></span><span class="ext"></span></p>
-            <h2>Форматы занятий</h2>
-            <p>Каждый курс — отдельная программа: свой словарь, свои задачи, свой темп. Начинаем с диагностики уровня и подбираем нужный.</p>
-        </div>
-        <div class="course-grid" id="courseGrid">
-            <!-- карточки генерируются из CONFIG.courses -->
-        </div>
-    </div>
-</section>
-
-<!-- =====================================================================
-     PROCESS
-     ===================================================================== -->
-<section id="process">
-    <div class="wrap">
-        <div class="section-head reveal">
-            <p class="section-tag"><span class="path"></span><span class="ext"></span></p>
-            <h2>Как проходит старт</h2>
-        </div>
-        <div class="steps" id="stepsGrid">
-            <!-- шаги генерируются из CONFIG.steps -->
-        </div>
-    </div>
-</section>
-
-<!-- =====================================================================
-     REVIEWS
-     ===================================================================== -->
-<section class="section-alt" id="reviews">
-    <div class="wrap">
-        <div class="section-head reveal">
-            <p class="section-tag"><span class="path"></span><span class="ext"></span></p>
-            <h2>Что говорят ученики</h2>
-        </div>
-        <div class="review-grid" id="reviewGrid">
-            <!-- карточки генерируются из CONFIG.reviews -->
-        </div>
-    </div>
-</section>
-
-<!-- =====================================================================
-     PRICING
-     ===================================================================== -->
-<section id="pricing">
-    <div class="wrap">
-        <div class="section-head reveal">
-            <p class="section-tag"><span class="path"></span><span class="ext"></span></p>
-            <h2>Стоимость занятий</h2>
-            <p>Оплата пакетами выгоднее разовых занятий. Первое занятие — диагностическое и бесплатное.</p>
-        </div>
-        <div class="price-grid" id="priceGrid">
-            <!-- карточки генерируются из CONFIG.plans -->
-        </div>
-    </div>
-</section>
-
-<!-- =====================================================================
-     FAQ
-     ===================================================================== -->
-<section class="section-alt" id="faq">
-    <div class="wrap">
-        <div class="section-head reveal">
-            <p class="section-tag"><span class="path"></span><span class="ext"></span></p>
-            <h2>Частые вопросы</h2>
-        </div>
-        <div class="faq-list" id="faqList">
-            <!-- генерируются из CONFIG.faq -->
-        </div>
-    </div>
-</section>
-
-<!-- =====================================================================
-     WHEEL OF FORTUNE
-     ===================================================================== -->
-<section id="wheel">
-    <div class="wrap">
-        <div class="section-head reveal">
-            <p class="section-tag"><span class="path"></span><span class="ext"></span></p>
-            <h2 id="wheelTitle"></h2>
-            <p id="wheelSubtitle"></p>
-        </div>
-
-        <div class="wheel-layout reveal">
-            <div class="wheel-stage-wrap">
-                <div class="wheel-pointer" aria-hidden="true"></div>
-                <div class="wheel-stage" id="wheelStage">
-                    <!-- SVG колеса собирается через JS из CONFIG.wheel.segments -->
-                </div>
-                <div class="wheel-hub">&lt;/&gt;</div>
-            </div>
-
-            <div class="wheel-panel">
-                <div class="wheel-spins-left" id="wheelSpinsLeft"></div>
-                <button class="btn btn-primary" id="wheelSpinBtn">Крутить колесо</button>
-                <p class="wheel-note" id="wheelCooldownNote"></p>
-                <p class="wheel-rules" id="wheelRules"></p>
-
-                <div class="wheel-result hidden" id="wheelResult"></div>
-
-                <div class="wheel-history" id="wheelHistory">
-                    <!-- история прошлых призов этого посетителя -->
+                <div class="legend">
+                    <span><i class="lg-noun"></i> существительное</span>
+                    <span><i class="lg-verb"></i> глагол</span>
+                    <span><i class="lg-adj"></i> прилагательное</span>
+                    <span><i class="lg-conj"></i> союз</span>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- =====================================================================
-     CONTACT
-     ===================================================================== -->
-<section id="contact">
-    <div class="wrap">
-        <div class="contact-wrap reveal">
-            <div class="contact-info">
-                <h2>Записаться на занятие</h2>
-                <p id="contactLede"></p>
-                <div class="contact-channels" id="contactChannels">
-                    <!-- генерируются из CONFIG.contact.channels -->
+    <!-- ticker strip -->
+    <div class="ticker" aria-hidden="true">
+        <div class="ticker-track" id="tickerTrack"></div>
+    </div>
+
+    <!-- ===================================================================
+         ABOUT
+         =================================================================== -->
+    <section id="about">
+        <div class="wrap">
+            <div class="section-head reveal">
+                <p class="section-tag"><span class="num">01</span> О школе</p>
+                <h2 class="text-balance">Кто ведёт занятия</h2>
+            </div>
+            <div class="about-grid">
+                <div class="about-card reveal" id="aboutCard"></div>
+                <div class="about-body reveal" id="aboutBody"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================================================================
+         COURSES
+         =================================================================== -->
+    <section class="section-line" id="courses">
+        <div class="wrap">
+            <div class="section-head reveal">
+                <p class="section-tag"><span class="num">02</span> Курсы</p>
+                <h2 class="text-balance">Форматы занятий</h2>
+                <p>Каждый курс — отдельная программа: свой словарь, свои задачи, свой темп. Начинаем с диагностики уровня и подбираем нужный.</p>
+            </div>
+            <div class="course-grid" id="courseGrid"></div>
+        </div>
+    </section>
+
+    <!-- ===================================================================
+         PROCESS
+         =================================================================== -->
+    <section class="section-line" id="process">
+        <div class="wrap">
+            <div class="section-head reveal">
+                <p class="section-tag"><span class="num">03</span> Процесс</p>
+                <h2 class="text-balance">Как проходит старт</h2>
+            </div>
+            <div class="steps" id="stepsGrid"></div>
+        </div>
+    </section>
+
+    <!-- ===================================================================
+         REVIEWS  (dark editorial band)
+         =================================================================== -->
+    <section class="section-ink" id="reviews">
+        <div class="wrap">
+            <div class="section-head reveal">
+                <p class="section-tag"><span class="num">04</span> Отзывы</p>
+                <h2 class="text-balance">Что говорят ученики</h2>
+            </div>
+            <div class="review-grid" id="reviewGrid"></div>
+        </div>
+    </section>
+
+    <!-- ===================================================================
+         PRICING
+         =================================================================== -->
+    <section id="pricing">
+        <div class="wrap">
+            <div class="section-head reveal">
+                <p class="section-tag"><span class="num">05</span> Цены</p>
+                <h2 class="text-balance">Стоимость занятий</h2>
+                <p>Оплата пакетами выгоднее разовых занятий. Первое занятие — диагностическое и бесплатное.</p>
+            </div>
+            <div class="price-grid" id="priceGrid"></div>
+        </div>
+    </section>
+
+    <!-- ===================================================================
+         FAQ
+         =================================================================== -->
+    <section class="section-line" id="faq">
+        <div class="wrap">
+            <div class="faq-grid">
+                <div class="section-head reveal">
+                    <p class="section-tag"><span class="num">06</span> FAQ</p>
+                    <h2 class="text-balance">Частые вопросы</h2>
+                    <p>Не нашли ответ? Напишите в Telegram — отвечаю в течение дня.</p>
+                </div>
+                <div class="faq-list reveal" id="faqList"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================================================================
+         WHEEL OF FORTUNE
+         =================================================================== -->
+    <section class="section-ink" id="wheel">
+        <div class="wrap">
+            <div class="section-head reveal">
+                <p class="section-tag"><span class="num">07</span> Бонус</p>
+                <h2 id="wheelTitle" class="text-balance"></h2>
+                <p id="wheelSubtitle"></p>
+            </div>
+
+            <div class="wheel-layout reveal">
+                <div class="wheel-stage-wrap">
+                    <div class="wheel-pointer" aria-hidden="true"></div>
+                    <div class="wheel-stage" id="wheelStage"></div>
+                    <div class="wheel-hub" aria-hidden="true">&lt;/&gt;</div>
+                </div>
+
+                <div class="wheel-panel">
+                    <div class="wheel-spins-left" id="wheelSpinsLeft" aria-live="polite"></div>
+                    <button class="btn btn-accent" id="wheelSpinBtn">Крутить колесо</button>
+                    <p class="wheel-note" id="wheelCooldownNote" aria-live="polite"></p>
+                    <div class="wheel-result hidden" id="wheelResult" aria-live="polite"></div>
+                    <div class="wheel-history" id="wheelHistory"></div>
+                    <p class="wheel-rules" id="wheelRules"></p>
                 </div>
             </div>
-            <div>
+        </div>
+    </section>
+
+    <!-- ===================================================================
+         CONTACT
+         =================================================================== -->
+    <section id="contact">
+        <div class="wrap">
+            <div class="contact-wrap reveal">
+                <div class="contact-info">
+                    <p class="section-tag"><span class="num">08</span> Контакты</p>
+                    <h2 class="text-balance">Записаться на занятие</h2>
+                    <p id="contactLede"></p>
+                    <div class="contact-channels" id="contactChannels"></div>
+                </div>
                 <form id="bookingForm" action="https://formspree.io/f/mrewvoja" method="POST">
                     <div class="form-group">
                         <label for="f-name">Имя</label>
-                        <input id="f-name" name="name" type="text" required placeholder="Как к вам обращаться">
+                        <input id="f-name" name="name" type="text" required placeholder="Как к вам обращаться" autocomplete="name">
                     </div>
                     <div class="form-group">
                         <label for="f-contact">Telegram, WhatsApp или email</label>
@@ -245,19 +236,20 @@
                         <label for="f-msg">Цель занятий</label>
                         <textarea id="f-msg" name="message" placeholder="Например: подготовка к собеседованиям на английском"></textarea>
                     </div>
-                    <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">Отправить заявку</button>
-                    <p class="form-status" id="formStatus"></p>
-                    <p class="form-note">После отправки заявки менеджер рассмотрит её и свяжется с вами в течение суток.</p>
+                    <button type="submit" class="btn btn-primary btn-block">Отправить заявку</button>
+                    <p class="form-status" id="formStatus" aria-live="polite"></p>
+                    <p class="form-note">После отправки заявки я рассмотрю её и свяжусь с вами в течение суток.</p>
                 </form>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+
+</main>
 
 <footer>
     <div class="wrap footer-inner">
         <span id="footerName"></span>
-        <span><span class="mono"></span></span>
+        <span class="footer-code">Fluency.compile() &mdash; 0 errors</span>
     </div>
 </footer>
 
