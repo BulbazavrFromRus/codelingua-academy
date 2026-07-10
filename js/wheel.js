@@ -176,7 +176,13 @@
     const historyEl = document.getElementById("wheelHistory");
 
     function formatDate(ts){
-        return new Date(ts).toLocaleDateString("ru-RU", {day:"numeric", month:"long"});
+        return new Date(ts).toLocaleString("ru-RU", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        });
     }
 
     function renderSpinsLeft(){
@@ -198,6 +204,7 @@
       <div class="wheel-history-item">
         <span class="wheel-history-label">${escapeHtml(h.label)}</span>
         <span class="wheel-history-code">${escapeHtml(h.code)}</span>
+        <span class="wheel-history-date">${formatDate(h.at)}</span>
       </div>
     `).join("");
         historyEl.innerHTML = `<div class="wheel-history-title">Ваши призы</div>${items}`;

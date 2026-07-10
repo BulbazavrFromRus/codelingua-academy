@@ -31,7 +31,7 @@ const CONFIG = {
     },
 
     tutor: {
-        name: "Анна Коваленко",
+        name: "Данила Бульбаков",
         role: "Основатель CodeLingua Academy",
         facts: [
             {k:"Опыт преподавания", v:"9 лет"},
@@ -141,21 +141,21 @@ const CONFIG = {
     plans: [
         {
             name: "Разовое занятие",
-            price: "2 500",
+            price: "1000",
             unit: "занятие",
             features: ["60 минут", "Материалы после урока", "Обратная связь по домашнему заданию"],
             reco: false,
         },
         {
             name: "Пакет на месяц",
-            price: "9 000",
+            price: "3 000",
             unit: "4 занятия",
             features: ["60 минут каждое", "Персональный план", "Проверка домашних заданий", "Поддержка в чате между уроками"],
             reco: true,
         },
         {
             name: "Интенсив",
-            price: "21 000",
+            price: "8 000",
             unit: "10 занятий",
             features: ["60 минут каждое", "Полный трекинг прогресса", "Разбор ошибок в письме", "Пробный тест в середине курса"],
             reco: false,
@@ -203,14 +203,13 @@ const CONFIG = {
         // "type": "discount" или "bonus" — только для внутренней логики (пока
         // просто определяет иконку в истории результатов).
         segments: [
-            {label:"Скидка 5%",              type:"discount", weight:25, color:"#caa356"},
-            {label:"Бесплатные материалы",   type:"bonus",     weight:15, color:"#6fbf8c"},
-            {label:"Скидка 10%",             type:"discount", weight:20, color:"#e5ac3f"},
+            {label:"Скидка 5%",              type:"discount", weight:10, color:"#caa356"},
+            {label:"Бесплатные материалы",   type:"bonus",     weight:10, color:"#6fbf8c"},
+            {label:"Скидка 10%",             type:"discount", weight:10, color:"#e5ac3f"},
             {label:"Разбор эссе бесплатно",  type:"bonus",     weight:15, color:"#7fa3c9"},
             {label:"Скидка 15%",             type:"discount", weight:10, color:"#d98a3f"},
-            {label:"Доп. урок бесплатно",    type:"bonus",     weight:10, color:"#5fa88a"},
-            {label:"Скидка 20% 🎉",          type:"discount", weight:5,  color:"#d98a82"},
-            {label: "Suck dick", type: "bonus", weight: 10, color: "#caa356"},
+            {label:"Доп. урок бесплатно",    type:"bonus",     weight:15, color:"#5fa88a"},
+            {label:"Скидка 20% 🎉",          type:"discount", weight:10,  color:"#d98a82"},
         ],
 
         rulesText: "Можно крутить 3 раза подряд, дальше колесо снова станет доступно через неделю. Промокод действует 14 дней — назовите его или покажите скриншот при записи на занятие.",

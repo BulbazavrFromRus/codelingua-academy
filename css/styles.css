@@ -1,5 +1,5 @@
 /* =========================================================================
-   CodeLinguae Academy — стили сайта
+   CodeLingua Academy — стили сайта
    Цветовые переменные и переменные шрифтов собраны в начале —
    их удобно менять, не трогая остальной код.
    ========================================================================= */
@@ -173,6 +173,7 @@ header{
 .btn-primary:hover{transform:translateY(-1px); box-shadow:0 6px 18px rgba(229,172,63,.3);}
 .btn-ghost{background:transparent; border-color:var(--ink-line); color:var(--text-on-ink);}
 .btn-ghost:hover{border-color:var(--text-on-ink-mut);}
+.btn-red-wheel-button{background:var(--rose); color:#141a17;}
 
 /* terminal window */
 .term{
@@ -397,7 +398,7 @@ footer{background:var(--ink); color:var(--text-on-ink-mut); padding:36px 0; bord
 @media (max-width:820px){ .wheel-layout{grid-template-columns:1fr; justify-items:center; text-align:center;} }
 
 .wheel-stage-wrap{
-    position:relative; width:340px; height:340px; flex-shrink:0;
+    position:relative; width:450px; height:450px; flex-shrink:0;
 }
 @media (max-width:480px){ .wheel-stage-wrap{width:280px; height:280px;} }
 
@@ -468,3 +469,8 @@ footer{background:var(--ink); color:var(--text-on-ink-mut); padding:36px 0; bord
     color:var(--text-on-paper-mut);
 }
 .wheel-history-code{ color:var(--text-on-paper); font-weight:700; }
+.wheel-history-date{
+    font-size:11px;
+    color:var(--text-on-paper-mut);
+    margin-left:10px;
+}
