@@ -9,7 +9,7 @@ const CONFIG = {
 
     brand: {
         name: "CodeLinguae Academy",
-        footer: "© 2026 CodeLinguae Academy. Все права защищены.",
+        footer: "© 2026 CodeLingua Academy. Все права защищены.",
     },
 
     hero: {
