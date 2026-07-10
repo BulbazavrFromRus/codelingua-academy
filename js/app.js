@@ -213,22 +213,47 @@ form.addEventListener("submit", async (e) => {
     status.className = "form-status";
 
     try{
+        // таймаут 15 секунд, чтобы форма не «зависала» при медленном ответе
+        const controller = new AbortController();
+        const timer = setTimeout(() => controller.abort(), 15000);
+
         const response = await fetch(form.action, {
             method: "POST",
             body: new FormData(form),
-            headers: { "Accept": "application/json" }
+            headers: { "Accept": "application/json" },
+            signal: controller.signal
         });
+        clearTimeout(timer);
 
         if(response.ok){
             status.textContent = "Спасибо! Заявка отправлена — я свяжусь с вами в течение дня.";
             status.className = "form-status ok";
             form.reset();
         } else {
-            status.textContent = "Не получилось отправить. Попробуйте ещё раз или напишите напрямую в Telegram/WhatsApp.";
+            // Пытаемся вытащить конкретную причину из ответа Formspree
+            let reason = "";
+            try{
+                const data = await response.json();
+                if(Array.isArray(data.errors) && data.errors.length){
+                    reason = data.errors.map(e => e.message).join("; ");
+                } else if(data.error){
+                    reason = data.error;
+                }
+            } catch(_){ /* ответ не в формате JSON — оставляем общее сообщение */ }
+
+            if(response.status === 429){
+                status.textContent = "Слишком много попыток подряд — подождите пару минут и отправьте снова, либо напишите в Telegram/WhatsApp.";
+            } else if(reason){
+                status.textContent = `Не получилось отправить (${reason}). Напишите напрямую в Telegram/WhatsApp.`;
+            } else {
+                status.textContent = `Не получилось отправить (ошибка ${response.status}). Попробуйте ещё раз или напишите в Telegram/WhatsApp.`;
+            }
             status.className = "form-status err";
         }
     } catch(err){
-        status.textContent = "Нет соединения. Попробуйте ещё раз или напишите напрямую в Telegram/WhatsApp.";
+        status.textContent = err.name === "AbortError"
+            ? "Сервер долго не отвечает. Попробуйте ещё раз или напишите напрямую в Telegram/WhatsApp."
+            : "Нет соединения. Проверьте интернет и попробуйте ещё раз, либо напишите в Telegram/WhatsApp.";
         status.className = "form-status err";
     } finally {
         submitBtn.disabled = false;
