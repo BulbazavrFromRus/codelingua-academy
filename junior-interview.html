@@ -1,0 +1,344 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Junior Interview</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Onest:wght@400;500;600;700&family=Unbounded:wght@500;700&display=swap">
+<style>
+    /* Layout: sticky top bar (timer, points) over a step rail, one task per screen, teacher notes drawer below. Looks like a code editor: dark code panes, tokenised palette. */
+    :root{
+        --bg:#EEF0F6; --surface:#FFFFFF; --fg:#171A29; --muted:#5B6078; --line:#D8DBE8;
+        --accent:#4B3FD6; --accent-fg:#FFFFFF; --soft:#E7E5FA;
+        --good:#0E7A55; --good-soft:#DDF3EA; --bad:#B8323F; --bad-soft:#FBE4E6;
+        --code-bg:#161926; --code-fg:#E4E7F5; --code-line:#2A2F45;
+        --t-kw:#C792EA; --t-str:#F2C46D; --t-num:#7FD1FF; --t-fn:#82AAFF; --t-com:#7A819E;
+        --f-body:'Onest',system-ui,sans-serif; --f-display:'Unbounded','Onest',system-ui,sans-serif; --f-code:'JetBrains Mono',ui-monospace,Consolas,monospace;
+    }
+    @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+        --bg:#0F111B; --surface:#191C2A; --fg:#ECEEF8; --muted:#9AA0BA; --line:#2B2F46;
+        --accent:#FFC857; --accent-fg:#1B1500; --soft:#2B2819;
+        --good:#52D8A2; --good-soft:#143A2D; --bad:#FF8190; --bad-soft:#42202A;
+        --code-bg:#0A0C14; color-scheme:dark}}
+    :root[data-theme="dark"]{
+        --bg:#0F111B; --surface:#191C2A; --fg:#ECEEF8; --muted:#9AA0BA; --line:#2B2F46;
+        --accent:#FFC857; --accent-fg:#1B1500; --soft:#2B2819;
+        --good:#52D8A2; --good-soft:#143A2D; --bad:#FF8190; --bad-soft:#42202A;
+        --code-bg:#0A0C14; color-scheme:dark}
+    *{box-sizing:border-box}
+    body{background:var(--bg);color:var(--fg);font:16px/1.5 var(--f-body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 40px}
+    body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+    .wrap{max-width:980px;margin:0 auto}
+    button{font:inherit;color:inherit;cursor:pointer}
+    button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+    /* top bar */
+    .bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);padding:12px 0 10px;border-bottom:1px solid var(--line)}
+    .bar-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+    .brand{font:700 14px/1 var(--f-display);letter-spacing:.02em;display:flex;gap:8px;align-items:center}
+    .brand i{font:600 13px var(--f-code);font-style:normal;background:var(--accent);color:var(--accent-fg);padding:4px 7px;border-radius:5px}
+    .tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .pill{font:600 13px var(--f-code);border:1px solid var(--line);background:var(--surface);padding:6px 10px;border-radius:6px;font-variant-numeric:tabular-nums;display:inline-flex;gap:6px;align-items:center}
+    .pill b{color:var(--accent)}
+    .ghost{background:transparent;border:1px solid var(--line);border-radius:6px;padding:6px 10px;font-size:13px}
+    .ghost:hover{border-color:var(--accent)}
+    .rail{display:flex;gap:6px;margin-top:10px;overflow-x:auto;padding-bottom:2px}
+    .step{flex:1 0 108px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 9px;line-height:1.2}
+    .step small{display:block;font:400 11px var(--f-code);color:var(--muted)}
+    .step span{font-size:13px;font-weight:600}
+    .step[aria-current="true"]{border-color:var(--accent);box-shadow:inset 0 -3px 0 var(--accent)}
+    .step.fin small::after{content:" ✓";color:var(--good)}
+    /* stage */
+    .stage{margin-top:22px}
+    .eyebrow{font:600 12px var(--f-code);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+    h1,h2{font-family:var(--f-display);margin:6px 0 4px;text-wrap:balance;line-height:1.15}
+    h1{font-size:clamp(26px,5vw,42px);font-weight:700}
+    h2{font-size:clamp(22px,3.6vw,30px);font-weight:700}
+    .lead{font-size:18px;color:var(--muted);margin:0 0 18px}
+    .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(min(100%,340px),1fr))}
+    .grid>*{min-width:0}
+    .panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px}
+    .panel h3{margin:0 0 10px;font-size:13px;font-family:var(--f-code);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+    .q{font-size:20px;font-weight:600;margin:0 0 12px}
+    /* code */
+    .code{background:var(--code-bg);color:var(--code-fg);border-radius:8px;border:1px solid var(--code-line);font:15px/1.7 var(--f-code);margin:0;overflow-x:auto;padding:12px 16px;white-space:pre;tab-size:4}
+    .code .kw{color:var(--t-kw)}.code .st{color:var(--t-str)}.code .nu{color:var(--t-num)}.code .fn{color:var(--t-fn)}
+    .dots{display:flex;gap:6px;margin-bottom:8px}.dots i{width:9px;height:9px;border-radius:50%;background:var(--code-line)}
+    textarea.code{width:100%;min-height:150px;resize:vertical;display:block}
+    .out{background:var(--code-bg);color:var(--code-fg);border-radius:8px;border:1px solid var(--code-line);font:15px/1.6 var(--f-code);padding:10px 16px;margin-top:10px;min-height:48px;white-space:pre-wrap}
+    .out .lbl{color:var(--t-com);font-size:11px;letter-spacing:.08em;display:block;text-transform:uppercase}
+    .out.err{color:#FF9AA5}
+    /* choices */
+    .opts{display:flex;gap:10px;flex-wrap:wrap}
+    .opt{background:var(--surface);border:2px solid var(--line);border-radius:8px;padding:10px 16px;font:600 16px var(--f-code);min-width:0;text-align:left}
+    .opt:hover:not(:disabled){border-color:var(--accent)}
+    .opt.bad{border-color:var(--bad);background:var(--bad-soft)}
+    .opt.ok{border-color:var(--good);background:var(--good-soft)}
+    .opt:disabled{cursor:default}
+    .opt.sel{border-color:var(--accent);background:var(--soft)}
+    .opt.done{border-color:var(--good);background:var(--good-soft);opacity:.85}
+    .fb{margin:10px 0 0;font-weight:600;min-height:1.4em}
+    .fb.ok{color:var(--good)}.fb.bad{color:var(--bad)}
+    /* buttons */
+    .btn{background:var(--accent);color:var(--accent-fg);border:0;border-radius:8px;padding:10px 18px;font-weight:700}
+    .btn:hover{filter:brightness(1.08)}
+    .btn.alt{background:transparent;color:var(--fg);border:1px solid var(--line)}
+    .btn.alt:hover{border-color:var(--accent)}
+    .btn[disabled]{opacity:.45;cursor:default}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .chip{background:var(--soft);border-radius:6px;padding:4px 10px;font:600 14px var(--f-code)}
+    .chip.say{border:1px dashed var(--accent);background:transparent;color:var(--fg);cursor:pointer}
+    .chip.say.on{background:var(--good-soft);border:1px solid var(--good)}
+    /* speak cards */
+    .speak{display:grid;grid-template-columns:1fr auto;gap:10px 14px;align-items:start;padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+    .speak.done{border-color:var(--good);background:var(--good-soft)}
+    .speak p{margin:0;font-size:19px;font-weight:600}
+    .speak .chips{grid-column:1/-1;margin:0}
+    .stack{display:grid;gap:10px}
+    input[type=text],input[type=number]{font:600 18px var(--f-code);background:var(--surface);color:var(--fg);border:2px solid var(--line);border-radius:8px;padding:9px 12px;min-width:0;width:100%;max-width:260px}
+    /* words */
+    .sent{min-height:54px;border:2px dashed var(--line);border-radius:8px;padding:8px;display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+    .sent.ok{border-style:solid;border-color:var(--good);background:var(--good-soft)}
+    .pts{font:600 12px var(--f-code);color:var(--muted)}
+    /* notes */
+    .notes{margin-top:28px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+    .notes summary{cursor:pointer;padding:12px 16px;font-weight:700}
+    .notes div{padding:0 16px 14px;color:var(--muted)}
+    .notes ul{margin:0;padding-left:20px;display:grid;gap:6px}
+    .notes b{color:var(--fg)}
+    .nav{display:flex;justify-content:space-between;gap:10px;margin-top:22px}
+    .big{font:700 clamp(40px,9vw,72px)/1 var(--f-display);color:var(--accent);font-variant-numeric:tabular-nums}
+    .can{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+    .can li{display:flex;gap:10px;align-items:center;font-weight:600}
+    .can li::before{content:"";width:18px;height:18px;border-radius:5px;border:2px solid var(--line);flex:none}
+    .can li.on::before{background:var(--good);border-color:var(--good)}
+    .hide-t .notes,.hide-t .tonly{display:none}
+    @media (prefers-reduced-motion:no-preference){.opt,.btn,.step{transition:border-color .15s,background .15s}}
+</style>
+
+<div class="wrap" id="app">
+    <header class="bar">
+        <div class="bar-row">
+            <div class="brand"><i>&gt;_</i> Junior Interview</div>
+            <div class="tools">
+                <button class="pill" id="timer" data-act="timer" aria-label="Start or pause the lesson timer">⏱ <b id="tv">00:00</b> / 45:00</button>
+                <span class="pill">Points <b id="pv">0</b> / <span id="pm">19</span></span>
+                <button class="ghost" data-act="tview" id="tbtn">Student view</button>
+                <button class="ghost" data-act="theme" id="themebtn">Theme</button>
+            </div>
+        </div>
+        <nav class="rail" id="rail" aria-label="Lesson steps"></nav>
+    </header>
+    <main class="stage" id="stage"></main>
+    <div class="nav"><button class="btn alt" data-act="prev" id="prev">← Back</button><button class="btn" data-act="next" id="next">Next →</button></div>
+</div>
+
+<script>
+    const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const hl=c=>esc(c).replace(/("[^"\n]*")|(\b(?:if|else|elif)\b)|(\bprint\b)|(\b\d+\b)/g,(m,s,k,f,n)=>s?`<span class="st">${s}</span>`:k?`<span class="kw">${k}</span>`:f?`<span class="fn">${f}</span>`:`<span class="nu">${n}</span>`);
+    const codeBlock=c=>`<div class="dots"><i></i><i></i><i></i></div><pre class="code">${hl(c)}</pre>`;
+    const MAX=19;
+    const STEPS=[['Welcome','0–5'],['Vocabulary','5–12'],['Explain','12–17'],['Predict','17–22'],['Find the bug','22–32'],['Interview','32–41'],['Level up','41–45']];
+    const BUG=`price = 100
+discount = 20
+
+final_price = price + discount
+print(final_price)`;
+    const S={i:0,pts:{},help:{},done:{},nick:'',q:{},sel:null,matched:[],badDef:null,said:[],age:15,ageOut:null,code:BUG,out:null,sent:[],qi:0,hide:false,run:false,sec:0};
+    const st=(k,fn)=>{try{return fn()}catch(e){return null}};
+
+    function award(id,v){S.pts[id]=Math.max(S.pts[id]||0,v)}
+    function total(){return Object.values(S.pts).reduce((a,b)=>a+b,0)}
+
+    /* shared widgets */
+    function quiz(id,prompt,opts,ok,note){
+        const q=S.q[id]||{tries:[],ok:false};
+        const btns=opts.map((o,i)=>{
+            let c='opt';if(q.ok&&i===ok)c+=' ok';else if(q.tries.includes(i))c+=' bad';
+            return `<button class="${c}" data-act="pick" data-id="${id}" data-i="${i}" data-ok="${ok}" ${q.ok?'disabled':''}>${esc(o)}</button>`}).join('');
+        const fb=q.ok?`<p class="fb ok">Correct! ${note||''}</p>`:q.tries.length?`<p class="fb bad">Not yet. Look at the code again and try another answer.</p>`:`<p class="fb"></p>`;
+        return `<p class="q">${prompt}</p><div class="opts">${btns}</div>${fb}`;
+    }
+    function speak(id,text,help){
+        const on=S.done[id],h=S.help[id];
+        const chips=h?`<div class="chips">${help.map(p=>`<span class="chip">${esc(p)}</span>`).join('')}</div>`:'';
+        return `<div class="speak ${on?'done':''}"><p>${text}</p>
+    <div class="row">${on?'<span class="pts">+'+S.pts[id]+'</span>':`<button class="btn alt" data-act="help" data-id="${id}">${h?'Help shown':'Help'}</button><button class="btn" data-act="said" data-id="${id}">I answered</button>`}</div>${chips}</div>`;
+    }
+
+    /* slides */
+    const SL=[
+        ()=>{
+            const nick=S.nick?`<div class="panel"><h3>Developer profile</h3><p class="q" style="margin:0">Welcome, <span style="color:var(--accent)">${esc(S.nick)}</span>! You are now a Junior Developer.</p></div>`
+                :`<div class="panel"><h3>Choose your developer name</h3><div class="row"><input type="text" id="nick" maxlength="16" placeholder="e.g. PixelFox" aria-label="Developer name"><button class="btn" data-act="nick">Start interview</button></div></div>`;
+            return `<div class="eyebrow">Slide 1 · 0–5 min</div><h1>Junior Developer Interview</h1><p class="lead">Today, you are a developer! Can you explain your code?</p>
+  <div class="stack">${nick}
+  <div class="stack">
+   ${speak('s1a','Hi! How are you?',["I'm fine, thank you.","I'm good.","I'm tired, but happy."])}
+   ${speak('s1b','Do you like programming?',['I like...','Yes, I do.','I like it because...'])}
+   ${speak('s1c','What programming language do you use?',['I use...','I use Python.'])}
+   ${speak('s1d','What do you like to create?',['I create...','I create games / websites / bots.'])}
+  </div></div>`;
+        },
+        ()=>{
+            const M=[['Variable','A name for a value.'],['Output','The result of the code.'],['Bug','A problem in the code.']];
+            const defs=[2,0,1];
+            const left=M.map((m,i)=>`<button class="opt ${S.matched.includes(i)?'done':S.sel===i?'sel':''}" data-act="term" data-i="${i}" ${S.matched.includes(i)?'disabled':''}>${m[0]}</button>`).join('');
+            const right=defs.map(d=>`<button class="opt ${S.matched.includes(d)?'done':S.badDef===d?'bad':''}" data-act="def" data-i="${d}" ${S.matched.includes(d)?'disabled':''}>${M[d][1]}</button>`).join('');
+            const code='name = "Alex"\nprint(name)';
+            return `<div class="eyebrow">Slide 2 · 5–12 min</div><h2>Developer vocabulary</h2><p class="lead">Read the code first. Guess the meaning, then answer.</p>
+  <div class="grid"><div class="panel"><h3>Code</h3>${codeBlock(code)}</div>
+  <div class="panel">${quiz('s2a','What is the variable?',['name','Alex','print'],0)}<div style="height:14px"></div>${quiz('s2b','What is the output?',['name','Alex','print(name)'],1)}</div></div>
+  <div class="panel" style="margin-top:16px"><h3>Match the word with its meaning</h3>
+  <div class="grid"><div class="stack">${left}</div><div class="stack">${right}</div></div>
+  <p class="fb ${S.matched.length===3?'ok':''}">${S.matched.length===3?'All matched! You speak developer.':S.sel!==null?'Now choose the meaning.':'Choose a word, then its meaning.'}</p></div>`;
+        },
+        ()=>{
+            const code='name = "Alex"\nprint("Hello, " + name)';
+            const P=['The output is "Hello, Alex".','The variable is name.','The code prints a greeting.'];
+            const chips=P.map((p,i)=>`<button class="chip say ${S.said.includes(i)?'on':''}" data-act="phrase" data-i="${i}">${esc(p)}</button>`).join('');
+            const help=S.help.s3say?`<div class="chips"><span class="chip">The code...</span><span class="chip">Does it print a greeting or a number?</span></div>`:'';
+            return `<div class="eyebrow">Slide 3 · 12–17 min</div><h2>Explain the code</h2><p class="lead">What does this code do?</p>
+  <div class="grid"><div class="panel"><h3>Code</h3>${codeBlock(code)}</div>
+  <div class="panel">${quiz('s3q','What is the output?',['Hello','Hello, Alex','Alex Hello'],1,'Now say it out loud.')}</div></div>
+  <div class="panel" style="margin-top:16px"><h3>Can you explain the code?</h3>
+   <p class="q">Say at least one sentence. Tap the sentences you said.</p><div class="chips" style="margin-top:0">${S.q.s3q&&S.q.s3q.ok?chips:'<span class="pts">Answer the question first.</span>'}</div>
+   <div class="row" style="margin-top:12px"><button class="btn alt" data-act="help" data-id="s3say">${S.help.s3say?'Help shown':'Help'}</button>${S.said.length?`<span class="pts">+${S.pts.s3say}</span>`:''}</div>${help}</div>`;
+        },
+        ()=>{
+            const a=S.age;
+            const code=`age = ${a}\n\nif age >= 18:\n    print("Adult")\nelse:\n    print("Teenager")`;
+            const can=S.q.s4q&&S.q.s4q.ok;
+            const why=can?speak('s4why','Why? Is 15 greater than or equal to 18?',['The output is... because...','The output is "Teenager" because age is 15.']):'';
+            const run=S.done.s4why?`<div class="panel" style="margin-top:16px"><h3>You are the developer. Change the input.</h3>
+   <p class="q">Change age to 20. What will the output be? Then run the code.</p>
+   <div class="row"><input type="number" id="agein" min="1" max="99" value="${S.ageIn??15}" aria-label="age"><button class="btn" data-act="runage">Run ▶</button>${S.pts.s4run?`<span class="pts">+${S.pts.s4run}</span>`:''}</div>
+   ${S.ageOut?`<div class="out"><span class="lbl">Output</span>${esc(S.ageOut)}</div>`:''}</div>`:'';
+            return `<div class="eyebrow">Slide 4 · 17–22 min</div><h2>What happens next?</h2><p class="lead">Predict the output, then explain why.</p>
+  <div class="grid"><div class="panel"><h3>Code</h3>${codeBlock(code)}</div>
+  <div class="panel">${quiz('s4q','What is the output?',['Adult','Teenager'],a>=18?0:1,'Why? Tell me.')}</div></div>
+  <div class="stack" style="margin-top:16px">${why}</div>${run}`;
+        },
+        ()=>{
+            const sentHTML=S.sent.map(i=>`<button class="chip say" data-act="unword" data-i="${i}">${esc(WB[i])}</button>`).join('');
+            const bank=WB.map((w,i)=>S.sent.includes(i)?'':`<button class="chip say" data-act="word" data-i="${i}">${esc(w)}</button>`).join('');
+            const right=S.sent.map(i=>WB[i]).join(' ')==='We need to subtract the discount.';
+            const outHTML=S.out?`<div class="out ${S.out.err?'err':''}"><span class="lbl">${S.out.err?'Error':'Output'}</span>${esc(S.out.text)}</div>`:'<div class="out"><span class="lbl">Output</span>Run the code to see the result.</div>';
+            const help=S.help.s5?`<div class="chips"><span class="chip">The problem is...</span><span class="chip">The code adds...</span><span class="chip">We need to subtract...</span></div>`:'';
+            return `<div class="eyebrow">Slide 5 · 22–32 min</div><h2>Find the bug!</h2><p class="lead">The program should calculate the final price. Is the code correct?</p>
+  <div class="grid"><div class="panel"><h3>Editor · Python</h3><div class="dots"><i></i><i></i><i></i></div>
+   <textarea class="code" id="code" spellcheck="false" aria-label="Python code">${esc(S.code)}</textarea>
+   <div class="row" style="margin-top:10px"><button class="btn" data-act="runcode">Run ▶</button><button class="btn alt" data-act="reset">Reset</button>${S.pts.s5fix?`<span class="pts">+${S.pts.s5fix}</span>`:''}</div>${outHTML}</div>
+  <div class="panel"><h3>Talk like a developer</h3>
+   <div class="stack"><p class="q" style="margin:0">Is the code correct?</p><p class="q" style="margin:0">What is the problem?</p><p class="q" style="margin:0">How can we fix it?</p></div>
+   <div class="row" style="margin-top:14px"><button class="btn alt" data-act="help" data-id="s5">${S.help.s5?'Help shown':'Help'}</button></div>${help}
+   <p class="tonly pts" style="margin-top:14px">Teacher: <code>final_price = price - discount</code> → 80</p></div></div>
+  <div class="panel" style="margin-top:16px"><h3>Explain the fix in one sentence</h3>
+   <div class="sent ${right?'ok':''}">${sentHTML||'<span class="pts">Tap the words in the right order.</span>'}</div>
+   <div class="chips" style="margin-top:0">${right?'<span class="fb ok" style="margin:0">Great sentence! Now say it out loud. +1</span>':bank}</div></div>`;
+        },
+        ()=>{
+            const QS=[['What programming language do you use?',['I use...']],['What is a variable?',['A variable is...','A name for a value.']],['What does this code print?',['The output is...']],['How do you fix a bug?',['I change...','I find the problem and I change the line.']]];
+            const k=S.qi;
+            let body;
+            if(k<4){
+                const q=QS[k],h=S.help['s6'+k];
+                const code=k===2?codeBlock('name = "Alex"\nprint("Hello, " + name)'):'';
+                body=`<div class="panel"><h3>Question ${k+1} of 4</h3><p class="q" style="font-size:clamp(22px,4vw,30px)">${q[0]}</p>${code}
+     ${h?`<div class="chips">${q[1].map(p=>`<span class="chip">${esc(p)}</span>`).join('')}</div>`:''}
+     <div class="row" style="margin-top:16px"><button class="btn alt" data-act="help" data-id="s6${k}">${h?'Hint shown (½ point)':'Hint (½ point)'}</button><button class="btn" data-act="next6">${h?'Answered +½':'Answered +1'}</button></div></div>`;
+            }else{
+                body=`<div class="panel"><h3>Switch roles</h3><p class="q" style="font-size:clamp(22px,4vw,30px)">Now you are the interviewer. Ask me one question about programming.</p>
+     <div class="chips"><span class="chip">What is...?</span><span class="chip">How do you...?</span><span class="chip">Do you like...?</span></div>
+     <div class="row" style="margin-top:16px">${S.done.s6x?'<span class="fb ok" style="margin:0">Great question! +1</span>':'<button class="btn" data-act="ask">I asked a question +1</button>'}</div></div>`;
+            }
+            const dots=[0,1,2,3,4].map(i=>`<span class="chip" style="${i===k?'background:var(--accent);color:var(--accent-fg)':i<k?'background:var(--good-soft)':''}">${i<4?'Q'+(i+1):'You'}</span>`).join('');
+            return `<div class="eyebrow">Slide 6 · 32–41 min</div><h2>Mini interview</h2><p class="lead">You are the candidate. I am the interviewer. Points are a game, not a test of you.</p>
+   <div class="chips" style="margin:0 0 14px">${dots}</div>${body}`;
+        },
+        ()=>{
+            const p=S.pts,sum=total();
+            const items=[['Explain simple Python code.',p.s3say],['Talk about variables and output.',p.s2a&&p.s2b],['Find and explain a bug.',p.s5fix]];
+            return `<div class="eyebrow">Slide 7 · 41–45 min</div><h1>Level completed!</h1><p class="lead">Great job${S.nick?', '+esc(S.nick):''}!</p>
+  <div class="grid"><div class="panel"><h3>Your points</h3><div class="big">${sum%1?sum.toFixed(1):sum}<span style="font-size:.4em;color:var(--muted)"> / ${MAX}</span></div></div>
+  <div class="panel"><h3>Today I can...</h3><ul class="can">${items.map(i=>`<li class="${i[1]?'on':''}">${i[0]}</li>`).join('')}</ul></div></div>
+  <div class="panel" style="margin-top:16px"><h3>Talk about the lesson</h3><div class="stack"><p class="q" style="margin:0">What was easy?</p><p class="q" style="margin:0">What was difficult?</p><p class="q" style="margin:0">Would you like to try another coding challenge?</p></div></div>`;
+        }];
+    const WB=['subtract','We','the','add','to','discount.','need','price'];
+
+
+    /* python-ish runner for the bug slide */
+    function runPy(src){
+        const vars={},out=[];
+        const ev=ex=>{
+            if(!/^[\w\s+\-*\/().]+$/.test(ex))throw new Error('SyntaxError: this editor supports numbers and + - * / only');
+            const js=ex.replace(/[A-Za-z_]\w*/g,n=>{if(!(n in vars))throw new Error(`NameError: name '${n}' is not defined`);return vars[n]});
+            const r=Function('"use strict";return ('+js+')')();
+            if(typeof r!=='number'||!isFinite(r))throw new Error('ValueError: cannot calculate this');
+            return r};
+        for(const raw of src.split('\n')){
+            const l=raw.trim();if(!l||l[0]==='#')continue;
+            let m;
+            if(m=l.match(/^([A-Za-z_]\w*)\s*=\s*(.+)$/))vars[m[1]]=ev(m[2]);
+            else if(m=l.match(/^print\((.+)\)$/))out.push(String(ev(m[1])));
+            else throw new Error('SyntaxError: invalid syntax → '+l);
+        }
+        return out.join('\n')||'(no output)';
+    }
+
+    /* render */
+    const $=id=>document.getElementById(id);
+    function render(){
+        $('stage').innerHTML=SL[S.i]();
+        $('rail').innerHTML=STEPS.map((s,i)=>`<button class="step ${S.i>i?'fin':''}" data-act="go" data-i="${i}" ${i===S.i?'aria-current="true"':''}><small>${s[1]} min</small><span>${s[0]}</span></button>`).join('');
+        $('pv').textContent=(total()%1?total().toFixed(1):total());$('pm').textContent=MAX;
+        $('nbody').innerHTML='<ul>'+NOTES[S.i].map(n=>`<li>${n}</li>`).join('')+'</ul>';
+        $('prev').disabled=S.i===0;$('next').disabled=S.i===SL.length-1;
+        $('app').classList.toggle('hide-t',S.hide);$('tbtn').textContent=S.hide?'Teacher view':'Student view';
+    }
+    function stepsGo(i){S.i=Math.max(0,Math.min(SL.length-1,i));render();window.scrollTo({top:0})}
+
+    document.addEventListener('click',e=>{
+        const t=e.target.closest('[data-act]');if(!t)return;
+        const a=t.dataset.act,id=t.dataset.id,i=+t.dataset.i;
+        if(a==='go')return stepsGo(i);
+        if(a==='prev')return stepsGo(S.i-1);
+        if(a==='next')return stepsGo(S.i+1);
+        if(a==='tview'){S.hide=!S.hide;return render()}
+        if(a==='theme'){const d=document.documentElement,cur=d.dataset.theme||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');d.dataset.theme=cur==='dark'?'light':'dark';return}
+        if(a==='timer'){if(S.run){clearInterval(S.iv);S.run=false;t.style.borderColor=''}else{S.run=true;t.style.borderColor='var(--accent)';S.iv=setInterval(()=>{S.sec++;const m=String(Math.floor(S.sec/60)).padStart(2,'0'),s=String(S.sec%60).padStart(2,'0');$('tv').textContent=m+':'+s},1000)}return}
+        if(a==='pick'){
+            const q=S.q[id]=S.q[id]||{tries:[],ok:false};
+            if(i===+t.dataset.ok){q.ok=true;award(id,1)}else if(!q.tries.includes(i))q.tries.push(i);
+            return render()}
+        if(a==='help'){S.help[id]=true;return render()}
+        if(a==='said'){S.done[id]=true;award(id,S.help[id]?0.5:1);return render()}
+        if(a==='nick'){const v=$('nick').value.trim();if(v){S.nick=v+'_dev';return render()}$('nick').focus();return}
+        if(a==='term'){S.sel=i;S.badDef=null;return render()}
+        if(a==='def'){
+            if(S.sel===null)return;
+            if(S.sel===i){S.matched.push(i);S.sel=null;S.badDef=null;if(S.matched.length===3)award('s2m',1)}else S.badDef=i;
+            return render()}
+        if(a==='phrase'){const k=S.said.indexOf(i);if(k>=0)S.said.splice(k,1);else S.said.push(i);
+            if(S.said.length)award('s3say',S.help.s3say?0.5:1);else delete S.pts.s3say;return render()}
+        if(a==='runage'){
+            const v=parseInt($('agein').value,10);S.ageIn=v;
+            if(isNaN(v))return;
+            S.ageOut=v>=18?'Adult':'Teenager';
+            if(v>=18)award('s4run',1);return render()}
+        if(a==='runcode'){
+            S.code=$('code').value;
+            try{const text=runPy(S.code);S.out={text};if(text==='80')award('s5fix',S.help.s5?0.5:1)}
+            catch(err){S.out={text:err.message,err:true}}
+            return render()}
+        if(a==='reset'){S.code=BUG;S.out=null;return render()}
+        if(a==='word'){S.sent.push(i);if(S.sent.map(k=>WB[k]).join(' ')==='We need to subtract the discount.')award('s5say',1);return render()}
+        if(a==='unword'){S.sent=S.sent.filter(k=>k!==i);return render()}
+        if(a==='next6'){award('s6'+S.qi,S.help['s6'+S.qi]?0.5:1);S.qi++;return render()}
+        if(a==='ask'){S.done.s6x=true;award('s6x',1);return render()}
+    });
+    document.addEventListener('input',e=>{if(e.target.id==='code')S.code=e.target.value});
+    document.addEventListener('keydown',e=>{
+        if(/INPUT|TEXTAREA/.test(document.activeElement.tagName))return;
+        if(e.key==='ArrowRight')stepsGo(S.i+1);if(e.key==='ArrowLeft')stepsGo(S.i-1)});
+    render();
+</script>
+
+</body></html>
